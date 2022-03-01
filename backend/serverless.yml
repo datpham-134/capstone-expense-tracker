@@ -52,7 +52,7 @@ functions:
     events:
       - http:
           method: get
-          path: todos
+          path: expenses
           cors: true
           authorizer: Auth
     iamRoleStatements:
@@ -75,7 +75,7 @@ functions:
     events:
       - http:
           method: post
-          path: todos
+          path: expenses
           cors: true
           authorizer: Auth
           request:
@@ -90,11 +90,18 @@ functions:
   # TODO: Configure this function
   # Provide property for setting up CORS, Authorizer, iamRoleStatements, and request schemas
   UpdateTodo:
-    handler: src/lambda/http/updateTodo.handler
+    handler: src/lambda/http/updateExpense.handler
     events:
       - http:
           method: patch
-          path: todos/{todoId}
+          path: expenses/{expenseId}
+          authorizer: Auth
+          cors: true
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.EXPENSES_TABLE}
 
   # TODO: Configure this function
   # Provide property for setting up CORS, Authorizer, iamRoleStatements

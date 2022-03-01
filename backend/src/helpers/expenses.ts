@@ -1,3 +1,4 @@
+import { UpdateExpenseRequest } from "./../requests/UpdateExpenseRequest";
 import * as uuid from "uuid";
 import { ExpenseItem } from "../models/ExpenseItem";
 import { CreateExpenseRequest } from "../requests/CreateExpenseRequest";
@@ -22,4 +23,12 @@ export async function createExpense(
   });
 
   return expenseItemCreated;
+}
+
+export async function updateExpense(
+  userId: string,
+  expenseId: string,
+  expensePayload: UpdateExpenseRequest
+): Promise<void> {
+  expenseAccessInstance.updateExpense(userId, expenseId, expensePayload);
 }

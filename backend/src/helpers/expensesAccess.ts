@@ -2,6 +2,7 @@ import * as AWS from "aws-sdk";
 import { DocumentClient } from "aws-sdk/clients/dynamodb";
 import * as AWSXRay from "aws-xray-sdk";
 import { ExpenseItem } from "../models/ExpenseItem";
+import { ExpenseUpdate } from "../models/ExpenseUpdate";
 import { createLogger } from "../utils/logger";
 
 const XAWS = AWSXRay.captureAWS(AWS);
@@ -63,9 +64,44 @@ export class ExpenseAccess {
     });
     return expense;
   }
+
+  async updateExpense(
+    userId: string,
+    expenseId: string,
+    expensePayload: ExpenseUpdate
+  ): Promise<void> {
+    logger.info("update expense = ", {
+      userId,
+      expenseId,
+      expensePayload,
+    });
+    this.docClient.update(
+      {
+        TableName: this.table,
+        Key: {
+          userId,
+          expenseId,
+        },
+        UpdateExpression: "set #name = :n, #price = :p1, #priority = :p2",
+        ExpressionAttributeValues: {
+          ":n": expensePayload.name,
+          ":p1": expensePayload.price,
+          ":p2": expensePayload.priority,
+        },
+        ExpressionAttributeNames: {
+          "#name": "name",
+          "#price": "price",
+          "#priority": "priority",
+        },
+      },
+      (err, data) => {
+        if (err) throw new Error("Error " + err);
+        else console.log("updated " + data);
+      }
+    );
+  }
 }
 
-// TODO: init todo access instance
 const docClient = new XAWS.DynamoDB.DocumentClient();
 const table = process.env.TODOS_TABLE;
 const index = process.env.TODOS_CREATED_AT_INDEX;
