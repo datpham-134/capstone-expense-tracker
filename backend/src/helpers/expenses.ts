@@ -3,6 +3,7 @@ import { ExpenseItem } from "../models/ExpenseItem";
 import { CreateExpenseRequest } from "../requests/CreateExpenseRequest";
 import { UpdateExpenseRequest } from "./../requests/UpdateExpenseRequest";
 import { expenseAccessInstance } from "./expensesAccess";
+import { FileStorageInstance } from "./attachmentUtils";
 
 // TODO: Implement businessLogic
 export async function getExpensesForCurrentUser(userId: string): Promise<any> {
@@ -35,4 +36,11 @@ export async function updateExpense(
 
 export async function deleteExpense(userId: string, expenseId: string): Promise<void> {
   expenseAccessInstance.deleteExpense(userId, expenseId);
+}
+
+export async function createAttachmentPresignedUrl(
+  userId: string,
+  expenseId: string
+): Promise<string> {
+  return FileStorageInstance.getPresignedUrl(userId, expenseId);
 }
