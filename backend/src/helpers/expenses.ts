@@ -1,7 +1,7 @@
-import { UpdateExpenseRequest } from "./../requests/UpdateExpenseRequest";
 import * as uuid from "uuid";
 import { ExpenseItem } from "../models/ExpenseItem";
 import { CreateExpenseRequest } from "../requests/CreateExpenseRequest";
+import { UpdateExpenseRequest } from "./../requests/UpdateExpenseRequest";
 import { expenseAccessInstance } from "./expensesAccess";
 
 // TODO: Implement businessLogic
@@ -31,4 +31,8 @@ export async function updateExpense(
   expensePayload: UpdateExpenseRequest
 ): Promise<void> {
   expenseAccessInstance.updateExpense(userId, expenseId, expensePayload);
+}
+
+export async function deleteExpense(userId: string, expenseId: string): Promise<void> {
+  expenseAccessInstance.deleteExpense(userId, expenseId);
 }

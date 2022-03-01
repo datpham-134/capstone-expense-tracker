@@ -71,7 +71,7 @@ export class ExpenseAccess {
     expensePayload: ExpenseUpdate
   ): Promise<void> {
     logger.info("update expense = ", {
-      userId,
+      credentials: userId,
       expenseId,
       expensePayload,
     });
@@ -97,6 +97,26 @@ export class ExpenseAccess {
       (err, data) => {
         if (err) throw new Error("Error " + err);
         else console.log("updated " + data);
+      }
+    );
+  }
+
+  async deleteExpense(userId: string, expenseId: string): Promise<void> {
+    logger.info("delete expense = ", {
+      credentials: userId,
+      expenseId,
+    });
+    this.docClient.delete(
+      {
+        TableName: this.table,
+        Key: {
+          userId,
+          expenseId,
+        },
+      },
+      (err, data) => {
+        if (err) throw new Error("Error " + err);
+        else console.log("delete " + data);
       }
     );
   }
