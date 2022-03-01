@@ -3,12 +3,12 @@ import * as middy from "middy";
 import { cors } from "middy/middlewares";
 import "source-map-support/register";
 import { createExpense } from "../../helpers/expenses";
-import { CreateTodoRequest } from "../../requests/CreateTodoRequest";
+import { CreateExpenseRequest } from "../../requests/CreateExpenseRequest";
 import { getUserId } from "../utils";
 
 export const handler = middy(
   async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    const newExpense: CreateTodoRequest = JSON.parse(event.body);
+    const newExpense: CreateExpenseRequest = JSON.parse(event.body);
     const userId = getUserId(event);
     const expenseItemCreated = await createExpense(userId, newExpense);
 

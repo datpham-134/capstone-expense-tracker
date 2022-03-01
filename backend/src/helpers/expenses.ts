@@ -1,14 +1,25 @@
-import { TodosAccess } from "./expensesAccess";
-import { AttachmentUtils } from "./attachmentUtils";
-import { TodoItem } from "../models/ExpenseItem";
-import { CreateTodoRequest } from "../requests/CreateExpenseRequest";
-import { UpdateTodoRequest } from "../requests/UpdateExpenseRequest";
-import { createLogger } from "../utils/logger";
 import * as uuid from "uuid";
-import * as createError from "http-errors";
+import { ExpenseItem } from "../models/ExpenseItem";
+import { CreateExpenseRequest } from "../requests/CreateExpenseRequest";
 import { expenseAccessInstance } from "./expensesAccess";
 
 // TODO: Implement businessLogic
 export async function getExpensesForCurrentUser(userId: string): Promise<any> {
   return expenseAccessInstance.getExpenses(userId);
+}
+
+export async function createExpense(
+  userId: string,
+  expensePayload: CreateExpenseRequest
+): Promise<ExpenseItem> {
+  const expenseItemCreated = expenseAccessInstance.createExpense({
+    userId,
+    expenseId: uuid.v4(),
+    createdAt: new Date().toISOString(),
+    attachmentUrl: undefined,
+    priority: 1,
+    ...expensePayload,
+  });
+
+  return expenseItemCreated;
 }

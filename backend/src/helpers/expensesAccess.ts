@@ -50,6 +50,19 @@ export class ExpenseAccess {
     });
     return expenses;
   }
+
+  async createExpense(expense: ExpenseItem): Promise<any> {
+    this.docClient
+      .put({
+        TableName: this.table,
+        Item: expense,
+      })
+      .promise();
+    logger.info("expense created = ", {
+      key: expense,
+    });
+    return expense;
+  }
 }
 
 // TODO: init todo access instance
