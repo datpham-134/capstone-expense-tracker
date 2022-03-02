@@ -48,7 +48,7 @@ export const handler = async (event: CustomAuthorizerEvent): Promise<CustomAutho
 };
 
 async function verifyToken(authHeader: string): Promise<JwtPayload> {
-  const jwksUrl = "https://dev-0dp2ohc5.us.auth0.com/.well-known/jwks.json.";
+  const jwksUrl = "https://dev-3l3kzikq.us.auth0.com/.well-known/jwks.json";
   const token = getToken(authHeader);
   const jwt: Jwt = decode(token, { complete: true }) as Jwt;
 
@@ -56,12 +56,15 @@ async function verifyToken(authHeader: string): Promise<JwtPayload> {
 
   const jwks = await Axios.get(jwksUrl);
   const signatureVerification = jwks.data.keys.filter((k) => k.kid === jwt.header.kid)?.[0];
+  logger.info("jwt header", { key: jwt.header.kid });
+  logger.info("signatureVerification", { key: signatureVerification });
 
   if (!signatureVerification)
     console.log(`signature verification not found in jwks, expected kid=${jwt.header.kid}`);
 
   const { x5c } = signatureVerification;
   const cert = `-----BEGIN CERTIFICATE-----\n${x5c?.[0]}\n-----END CERTIFICATE-----`;
+  logger.info("cert = ", { key: cert });
 
   return verify(token, cert, { algorithms: ["RS256"] }) as JwtPayload;
 }

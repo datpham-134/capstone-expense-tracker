@@ -26,12 +26,12 @@ export class ExpenseAccess {
     urlTime: number,
     docClient: DocumentClient
   ) {
-    this.docClient = docClient;
     this.s3 = s3;
     this.table = table;
     this.index = index;
     this.bucket = bucket;
     this.urlTime = urlTime;
+    this.docClient = docClient;
   }
 
   async getExpenses(userId: string): Promise<any> {
@@ -130,10 +130,10 @@ const urlTime = +process.env.SIGNED_URL_EXPIRATION;
 const s3 = new XAWS.S3({ signatureVersion: "v4" });
 
 export const expenseAccessInstance = new ExpenseAccess(
-  docClient,
+  s3,
   table,
   index,
   bucket,
   urlTime,
-  s3
+  docClient
 );

@@ -1,6 +1,6 @@
 org: datpham134
 app: expense-tracker
-service: serverless-todo-app
+service: expense-tracker-capstone
 
 plugins:
   - serverless-webpack
@@ -61,8 +61,6 @@ functions:
   Auth:
     handler: src/lambda/auth/auth0Authorizer.handler
 
-  # TODO: Configure this function -
-  # Provide iamRoleStatements property for performing Actions on DynamoDB
   GetExpenses:
     handler: src/lambda/http/getExpenses.handler
     events:
@@ -82,10 +80,6 @@ functions:
           - dynamodb:Scan
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.EXPENSES_TABLE}/index/${self:provider.environment.EXPENSES_CREATED_AT_INDEX}
 
-  # TODO: Configure this function -
-  # Provide iamRoleStatements property. Decide the Actions and AWS Resource.
-  # To refer to an AWS resource defined in the "Resources" section, you can use "Resource: !GetAtt <resource-name>.Arn"
-  # To validate incoming HTTP requests, we have provided the request schemas in function definition below.
   CreateExpense:
     handler: src/lambda/http/createExpense.handler
     events:
