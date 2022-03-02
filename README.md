@@ -1,6 +1,10 @@
 # Expense Tracker
 
-## In real life, we need manage our money flow. Expense tracker keep track off how much do you spend at specific time. It's have CRUD methods for expense object as well as authentication to display list expenses of specific user
+## Starter Code
+
+[serverless-todo-starter](https://github.com/udacity/cloud-developer/tree/master/course-04/project/c4-final-project-starter-code)
+
+### In real life, we need manage our money flow. Expense tracker keep track off how much do you spend at specific time. It's have CRUD methods for expense object as well as authentication to display list expenses of specific user
 
 ### Tech stack using: serverless technology, typescript, nodejs and auth0
 
