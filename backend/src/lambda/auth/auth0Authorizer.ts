@@ -60,7 +60,8 @@ async function verifyToken(authHeader: string): Promise<JwtPayload> {
   if (!signatureVerification)
     console.log(`signature verification not found in jwks, expected kid=${jwt.header.kid}`);
 
-  const cert = `-----BEGIN CERTIFICATE-----\n${signatureVerification?.x5c?.[0]}\n-----END CERTIFICATE-----`;
+  const { x5c } = signatureVerification;
+  const cert = `-----BEGIN CERTIFICATE-----\n${x5c?.[0]}\n-----END CERTIFICATE-----`;
 
   return verify(token, cert, { algorithms: ["RS256"] }) as JwtPayload;
 }
