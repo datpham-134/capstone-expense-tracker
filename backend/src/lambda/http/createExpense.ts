@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import * as middy from "middy";
-import { cors } from "middy/middlewares";
+import { cors, httpErrorHandler } from "middy/middlewares";
 import "source-map-support/register";
 import { createExpense } from "../../helpers/expenses";
 import { CreateExpenseRequest } from "../../requests/CreateExpenseRequest";
@@ -16,7 +16,7 @@ export const handler = middy(
   }
 );
 
-handler.use(
+handler.use(httpErrorHandler()).use(
   cors({
     credentials: true,
   })

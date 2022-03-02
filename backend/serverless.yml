@@ -12,7 +12,7 @@ plugins:
 provider:
   name: aws
   runtime: nodejs12.x
-  lambdaHashingVersion: "20201221"
+  lambdaHashingVersion: '20201221'
 
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'ap-southeast-1'}
@@ -40,21 +40,21 @@ provider:
           Action:
             - xray:PutTelemetryRecords
             - xray:PutTraceSegments
-          Resource: "*"
+          Resource: '*'
 
 custom:
   documentation:
     api:
       info:
-        version: "1.0.0"
+        version: '1.0.0'
         title: expense tracker API
         description: Udacity capstone project expense tracker using serverless
     models:
       - name: CreateExpenseRequest
-        contentType: "application/json"
+        contentType: 'application/json'
         schema: ${file(models/create-expense-model.json)}
       - name: UpdateExpenseRequest
-        contentType: "application/json"
+        contentType: 'application/json'
         schema: ${file(models/update-expense-model.json)}
 
 functions:
@@ -91,7 +91,7 @@ functions:
           reqValidatorName: RequestBodyValidator
           documentation:
             requestModels:
-              "application/json": CreateExpenseRequest
+              'application/json': CreateExpenseRequest
           request:
             schemas:
               application/json: ${file(models/create-expense-model.json)}
@@ -101,8 +101,6 @@ functions:
           - dynamodb:PutItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.EXPENSES_TABLE}
 
-  # TODO: Configure this function
-  # Provide property for setting up CORS, Authorizer, iamRoleStatements, and request schemas
   UpdateExpense:
     handler: src/lambda/http/updateExpense.handler
     events:
@@ -114,15 +112,13 @@ functions:
           reqValidatorName: RequestBodyValidator
           documentation:
             requestModels:
-              "application/json": UpdateExpenseRequest
+              'application/json': UpdateExpenseRequest
     iamRoleStatements:
       - Effect: Allow
         Action:
           - dynamodb:UpdateItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.EXPENSES_TABLE}
 
-  # TODO: Configure this function
-  # Provide property for setting up CORS, Authorizer, iamRoleStatements
   DeleteExpense:
     handler: src/lambda/http/deleteExpense.handler
     events:
@@ -137,8 +133,6 @@ functions:
           - dynamodb:DeleteItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.EXPENSES_TABLE}
 
-  # TODO: Configure this function
-  # Provide property for setting up CORS, Authorizer, iamRoleStatements
   GenerateUploadUrl:
     handler: src/lambda/http/generateUploadUrl.handler
     events:
@@ -160,6 +154,15 @@ functions:
 
 resources:
   Resources:
+    RequestBodyValidator:
+      Type: 'AWS::ApiGateway::RequestValidator'
+      Properties:
+        Name: 'request-body-validator'
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        ValidateRequestBody: true
+        ValidateRequestParameters: false
+
     GatewayResponseDefault4XX:
       Type: AWS::ApiGateway::GatewayResponse
       Properties:
@@ -178,16 +181,16 @@ resources:
         CorsConfiguration:
           CorsRules:
             - AllowedOrigins:
-                - "*"
+                - '*'
               AllowedHeaders:
-                - "*"
+                - '*'
               AllowedMethods:
                 - GET
                 - PUT
                 - POST
                 - DELETE
                 - HEAD
-              MaxAge: 8000
+              MaxAge: 3000
 
     TodosTable:
       Type: AWS::DynamoDB::Table
@@ -221,21 +224,13 @@ resources:
       Properties:
         PolicyDocument:
           Id: MyPolicy
-          Version: "2012-10-17"
+          Version: '2012-10-17'
           Statement:
             - Sid: PublicReadForGetBucketObjects
               Effect: Allow
-              Principal: "*"
+              Principal: '*'
               Action:
                 - s3:GetObject
                 - s3:PutObject
-              Resource: "arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*"
+              Resource: 'arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*'
         Bucket: !Ref AttachmentsBucket
-    RequestBodyValidator:
-      Type: "AWS::ApiGateway::RequestValidator"
-      Properties:
-        Name: "request-body-validator"
-        RestApiId:
-          Ref: ApiGatewayRestApi
-        ValidateRequestBody: true
-        ValidateRequestParameters: false
