@@ -7,6 +7,8 @@ plugins:
   - serverless-webpack
   - serverless-iam-roles-per-function
   - serverless-plugin-tracing
+  - serverless-reqvalidator-plugin
+  - serverless-aws-documentation
 
 provider:
   name: aws
@@ -40,6 +42,21 @@ provider:
             - xray:PutTelemetryRecords
             - xray:PutTraceSegments
           Resource: "*"
+
+custom:
+  documentation:
+    api:
+      info:
+        version: "1.0.0"
+        title: expense tracker API
+        description: Udacity capstone project expense tracker using serverless
+    models:
+      - name: CreateExpenseRequest
+        contentType: "application/json"
+        schema: ${file(models/create-expense-model.json)}
+      - name: UpdateExpenseRequest
+        contentType: "application/json"
+        schema: ${file(models/update-expense-model.json)}
 
 functions:
   Auth:
@@ -78,6 +95,10 @@ functions:
           path: expenses
           cors: true
           authorizer: Auth
+          reqValidatorName: RequestBodyValidator
+          documentation:
+            requestModels:
+              "application/json": CreateExpenseRequest
           request:
             schemas:
               application/json: ${file(models/create-expense-model.json)}
@@ -97,6 +118,10 @@ functions:
           path: expenses/{expenseId}
           authorizer: Auth
           cors: true
+          reqValidatorName: RequestBodyValidator
+          documentation:
+            requestModels:
+              "application/json": UpdateExpenseRequest
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -213,3 +238,11 @@ resources:
                 - s3:PutObject
               Resource: "arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*"
         Bucket: !Ref AttachmentsBucket
+    RequestBodyValidator:
+      Type: "AWS::ApiGateway::RequestValidator"
+      Properties:
+        Name: "request-body-validator"
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        ValidateRequestBody: true
+        ValidateRequestParameters: false
